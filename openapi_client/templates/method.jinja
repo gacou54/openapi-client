@@ -1,0 +1,39 @@
+    def {{ FUNCTION_NAME }}(self, {{ FUNCTION_PARAMETERS }}params: dict = None, headers: dict = None) -> list[str]:
+        """{{ OPERATION.summary }}
+
+        {{ OPERATION.description }}
+        Tags: {{ ','.join(OPERATION.tags) }}
+        {%- if OPERATION.externalDocs %}ExternaDocs: {{ OPERATION.externalDocs }}{% endif %}
+
+        Parameters
+        ----------
+        {% for param in OPERATION.parameters -%}
+        {% if param.in_ == 'path' -%}
+        {{ param.name.replace('id', 'id_') }}
+            {{ param.description }}
+        {% endif %}
+        {%- endfor -%}
+        params
+            Dictionary of optional parameters:
+        {%- for param in OPERATION.parameters -%}
+        {%- if param.in_ == 'query' %}
+            {{ param.name }} ({{ TYPES[param.schema.type] }}): {{ param.description }}
+        {%- endif %}
+        {%- endfor %}
+        headers
+            Dictionary of optional headers:
+        {%- for param in OPERATION.parameters -%}
+        {% if param.in_ == 'header' %}
+            {{ param.name }} ({{ TYPES[param.schema.type] }}): {{ param.description }}
+        {% endif %}
+        {%- endfor %}
+
+        Returns
+        -------
+        """
+        {% if OPERATION.deprecated %}warnings.warn('This method is deprecated.', DeprecationWarning, stacklevel=2){% endif %}
+        return self._{{ METHOD }}(
+            route=f'{self.url}{{ ROUTE }}',
+            params=params,
+            headers=headers
+        )
