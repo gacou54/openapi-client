@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "openapi-client"
 version = "0.1.0"
-description = "OpenAPI Python client generator that follows the KISS principles."
+description = "OpenAPI Python client generator that follows the KISS principle."
 authors = ["Gabriel Couture <gacou54@gmail.com>"]
 
 [tool.poetry.dependencies]
