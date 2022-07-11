@@ -1,4 +1,4 @@
-    def {{ FUNCTION_NAME }}(self, {{ FUNCTION_PARAMETERS }}params: dict = None, headers: dict = None) -> list[str]:
+    def {{ FUNCTION_NAME }}(self, {{ FUNCTION_PARAMETERS }}params: dict = None, headers: dict = None) -> Any:
         """{{ OPERATION.summary }}
 
         {{ OPERATION.description }}
@@ -30,6 +30,10 @@
 
         Returns
         -------
+        {% for response in RESPONSES -%}
+        If {{ response.result }}
+            {{ response.description }}
+        {%- endfor %}
         """
         {% if OPERATION.deprecated %}warnings.warn('This method is deprecated.', DeprecationWarning, stacklevel=2){% endif %}
         return self._{{ METHOD }}(

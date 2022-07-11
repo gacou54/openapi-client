@@ -5,13 +5,17 @@ import jinja2
 
 from openapi_client.config import Config
 from openapi_client.openapi import Document
-from openapi_client.openapi.path import Parameter
+from openapi_client.openapi.path import Parameter, Response
 
 TYPES = {
     'boolean': 'bool',
     'number': 'int',
     'string': 'str',
     'array': 'list',
+}
+STATUS_CODES = {
+    '200': 'success',
+    '201': 'created',
 }
 
 
@@ -45,7 +49,8 @@ def write_client(document: Document, config: Config):
                 OPERATION=path.get,
                 FUNCTION_PARAMETERS=_make_parameters(path.get.parameters),
                 HEADERS=_make_headers_passed_arg(path.get.parameters),
-                TYPES=TYPES
+                TYPES=TYPES,
+                RESPONSES=_make_responses(path.get.responses)
             )
             elements.append(output)
         # if path.post is not None:
@@ -128,7 +133,20 @@ def _make_parameters(parameters: list[Parameter]) -> str:
     return ', '.join(parameters_str) + ', '
 
 
-def _make_headers_passed_arg(parameters: list[Parameter]):
+def _make_headers_passed_arg(parameters: list[Parameter]) -> dict:
     headers = {p.name: p.description for p in parameters if p.in_ == 'header'}
 
     return headers
+
+
+def _make_responses(responses: dict[str, Response]) -> list:
+    responses_str = []
+
+    for status_code, response in responses.items():
+        for _, mediatype in response.content.items():
+            responses_str.append({
+                'result': STATUS_CODES[status_code],
+                'description': 'No description' if mediatype.schema is None else mediatype.schema['description']
+            })
+
+    return responses_str
