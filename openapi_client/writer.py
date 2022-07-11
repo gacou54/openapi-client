@@ -145,7 +145,6 @@ def _make_responses(responses: dict[str, Response]) -> list:
     for status_code, response in responses.items():
         for _, mediatype in response.content.items():
             responses_str.append({
-                'result': STATUS_CODES[status_code],
                 'description': 'No description' if mediatype.schema is None else mediatype.schema['description']
             })
 

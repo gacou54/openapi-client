@@ -14,7 +14,6 @@ def apply_corrections_to_documents(document: Document) -> Document:
         if path.get is not None:
             for param in path.get.parameters:
                 if param.name == '...':
-                    print(path)
                     param.name = 'tags_path'
 
                     to_change.append({

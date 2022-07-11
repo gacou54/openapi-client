@@ -1,4 +1,4 @@
-    def {{ FUNCTION_NAME }}(self, {{ FUNCTION_PARAMETERS }}params: dict = None, headers: dict = None) -> Any:
+    def {{ FUNCTION_NAME }}(self, {{ FUNCTION_PARAMETERS }}params: dict = None, headers: dict = None) -> Union[list, dict, str, bytes, int]:
         """{{ OPERATION.summary }}
 
         {{ OPERATION.description }}
@@ -25,13 +25,13 @@
         {%- for param in OPERATION.parameters -%}
         {% if param.in_ == 'header' %}
             {{ param.name }} ({{ TYPES[param.schema.type] }}): {{ param.description }}
-        {% endif %}
+        {%- endif %}
         {%- endfor %}
 
         Returns
         -------
-        {% for response in RESPONSES -%}
-        If {{ response.result }}
+        Union[list, dict, str, bytes, int]
+        {%- for response in RESPONSES %}
             {{ response.description }}
         {%- endfor %}
         """
