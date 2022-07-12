@@ -121,68 +121,82 @@ class Path:
     summary: str = None
     description: str = None
 
-    get: Operation = None
-    post: Operation = None
-    put: Operation = None
-    delete: Operation = None
-    options: Operation = None
-    head: Operation = None
-    patch: Operation = None
-    trace: Operation = None
+    operations: dict = None
+
+    def __init__(self, **kwargs):
+        # self.summary = summary
+        # self.description = description
+
+        self.operations = {}
+
+        for operation_name, operation_data in kwargs.items():
+            # Cleaning unused data to generate the client
+            operation_data.pop('servers', None)
+            operation_data.pop('callbacks', None)
+
+            self.operations[operation_name] = Operation(**operation_data)
 
     def __post_init__(self):
-        if self.get is not None:
-            # Cleaning unused data to generate the client
-            self.get.pop('servers', None)
-            self.get.pop('callbacks', None)
+        return
+        if self.operations:
+                # Cleaning unused data to generate the client
+                operation.pop('servers', None)
+                operation.pop('callbacks', None)
 
-            self.get = Operation(**self.get)
+                self.operations[operation] = Operation(**operation_data)
 
-        if self.post is not None:
-            # Cleaning unused data to generate the client
-            self.post.pop('servers', None)
-            self.post.pop('callbacks', None)
-
-            self.post = Operation(**self.post)
-
-        if self.put is not None:
-            # Cleaning unused data to generate the client
-            self.put.pop('servers', None)
-            self.put.pop('callbacks', None)
-
-            self.put = Operation(**self.put)
-
-        if self.delete is not None:
-            # Cleaning unused data to generate the client
-            self.delete.pop('servers', None)
-            self.delete.pop('callbacks', None)
-
-            self.delete = Operation(**self.delete)
-
-        if self.options is not None:
-            # Cleaning unused data to generate the client
-            self.options.pop('servers', None)
-            self.options.pop('callbacks', None)
-
-            self.options = Operation(**self.options)
-
-        if self.head is not None:
-            # Cleaning unused data to generate the client
-            self.head.pop('servers', None)
-            self.head.pop('callbacks', None)
-
-            self.head = Operation(**self.head)
-
-        if self.patch is not None:
-            # Cleaning unused data to generate the client
-            self.patch.pop('servers', None)
-            self.patch.pop('callbacks', None)
-
-            self.patch = Operation(**self.patch)
-
-        if self.trace is not None:
-            # Cleaning unused data to generate the client
-            self.trace.pop('servers', None)
-            self.trace.pop('callbacks', None)
-
-            self.trace = Operation(**self.trace)
+        # if self.get is not None:
+        #     # Cleaning unused data to generate the client
+        #     self.get.pop('servers', None)
+        #     self.get.pop('callbacks', None)
+        #
+        #     self.get = Operation(**self.get)
+        #
+        # if self.post is not None:
+        #     # Cleaning unused data to generate the client
+        #     self.post.pop('servers', None)
+        #     self.post.pop('callbacks', None)
+        #
+        #     self.post = Operation(**self.post)
+        #
+        # if self.put is not None:
+        #     # Cleaning unused data to generate the client
+        #     self.put.pop('servers', None)
+        #     self.put.pop('callbacks', None)
+        #
+        #     self.put = Operation(**self.put)
+        #
+        # if self.delete is not None:
+        #     # Cleaning unused data to generate the client
+        #     self.delete.pop('servers', None)
+        #     self.delete.pop('callbacks', None)
+        #
+        #     self.delete = Operation(**self.delete)
+        #
+        # if self.options is not None:
+        #     # Cleaning unused data to generate the client
+        #     self.options.pop('servers', None)
+        #     self.options.pop('callbacks', None)
+        #
+        #     self.options = Operation(**self.options)
+        #
+        # if self.head is not None:
+        #     # Cleaning unused data to generate the client
+        #     self.head.pop('servers', None)
+        #     self.head.pop('callbacks', None)
+        #
+        #     self.head = Operation(**self.head)
+        #
+        # if self.patch is not None:
+        #     # Cleaning unused data to generate the client
+        #     self.patch.pop('servers', None)
+        #     self.patch.pop('callbacks', None)
+        #
+        #     self.patch = Operation(**self.patch)
+        #
+        # if self.trace is not None:
+        #     # Cleaning unused data to generate the client
+        #     self.trace.pop('servers', None)
+        #     self.trace.pop('callbacks', None)
+        #
+        #     self.trace = Operation(**self.trace)

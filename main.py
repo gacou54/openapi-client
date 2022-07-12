@@ -11,15 +11,16 @@ def apply_corrections_to_documents(document: Document) -> Document:
     to_change = []
 
     for route, path in document.paths.items():
-        if path.get is not None:
-            for param in path.get.parameters:
-                if param.name == '...':
-                    param.name = 'tags_path'
+        if path.operations is not None:
+            for operation_name, operation in path.operations.items():
+                for param in operation.parameters:
+                    if param.name == '...':
+                        param.name = 'tags_path'
 
-                    to_change.append({
-                        'old_route': route,
-                        'new_route': route + '/{tags_path}',
-                    })
+                        to_change.append({
+                            'old_route': route,
+                            'new_route': route + '/{tags_path}',
+                        })
 
     for change in to_change:
         document.paths[change['new_route']] = document.paths.pop(change['old_route'])

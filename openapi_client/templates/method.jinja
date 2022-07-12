@@ -1,4 +1,17 @@
-    def {{ FUNCTION_NAME }}(self, {{ FUNCTION_PARAMETERS }}params: dict = None, headers: dict = None) -> Union[list, dict, str, bytes, int]:
+    def {{ FUNCTION_NAME }}(
+            self,
+            {% if FUNCTION_PARAMETERS %}{% for param in FUNCTION_PARAMETERS %}{{ param }},
+            {% endfor -%}
+            {%- endif -%}
+            {%- if METHOD in ['put', 'post'] -%}
+            content: RequestContent = None,
+            data: RequestData = None,
+            files: RequestFiles = None,
+            json: Any = None,
+            {% endif -%}
+            params: QueryParamTypes = None,
+            headers: HeaderTypes = None,
+            cookies: CookieTypes = None) -> {% if METHOD not in ['delete', 'put'] %}Union[list, dict, str, bytes, int]{% else %}None{% endif %}:
         """{{ OPERATION.summary }}
 
         {{ OPERATION.description }}
@@ -13,6 +26,15 @@
             {{ param.description }}
         {% endif %}
         {%- endfor -%}
+        {%- if METHOD in ['put','post'] %}content
+            Binary data.
+        data
+            Non-nested dictionary.
+        files
+            File object (ex. `{'upload-file': open('rtdose.dcm', 'rb')}`).
+        json
+            For complex/nested dictionary data.
+        {% endif -%}
         params
             Dictionary of optional parameters:
         {%- for param in OPERATION.parameters -%}
@@ -27,6 +49,8 @@
             {{ param.name }} ({{ TYPES[param.schema.type] }}): {{ param.description }}
         {%- endif %}
         {%- endfor %}
+        cookies
+            Cookies in the request.
 
         Returns
         -------
@@ -35,9 +59,17 @@
             {{ response.description }}
         {%- endfor %}
         """
-        {% if OPERATION.deprecated %}warnings.warn('This method is deprecated.', DeprecationWarning, stacklevel=2){% endif %}
+        {% if OPERATION.deprecated %}warnings.warn('This method is deprecated.', DeprecationWarning, stacklevel=2)
+
+        {% endif -%}
         return self._{{ METHOD }}(
             route=f'{self.url}{{ ROUTE }}',
+            {% if METHOD in ['put', 'post'] %}content=content,
+            data=data,
+            files=files,
+            json=json,
+            {% endif -%}
             params=params,
-            headers=headers
+            headers=headers,
+            cookies=cookies
         )

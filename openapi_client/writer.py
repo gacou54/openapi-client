@@ -13,10 +13,6 @@ TYPES = {
     'string': 'str',
     'array': 'list',
 }
-STATUS_CODES = {
-    '200': 'success',
-    '201': 'created',
-}
 
 
 def write_client(document: Document, config: Config):
@@ -41,53 +37,19 @@ def write_client(document: Document, config: Config):
         # Rename "id" to "id_" because "id" is a builtin function in Python.
         route = route.replace('id', 'id_')
 
-        if path.get is not None:
-            output = template_method.render(
-                FUNCTION_NAME=_make_function_name(route, 'get'),
-                METHOD='get',
-                ROUTE=route,
-                OPERATION=path.get,
-                FUNCTION_PARAMETERS=_make_parameters(path.get.parameters),
-                HEADERS=_make_headers_passed_arg(path.get.parameters),
-                TYPES=TYPES,
-                RESPONSES=_make_responses(path.get.responses)
-            )
-            elements.append(output)
-        # if path.post is not None:
-        #     output = template_method.render(
-        #         FUNCTION_NAME=_make_function_name(route, 'post')
-        #     )
-        #     elements.append(output)
-        # if path.put is not None:
-        #     output = template_method.render(
-        #         FUNCTION_NAME=_make_function_name(route, 'put')
-        #     )
-        #     elements.append(output)
-        # if path.delete is not None:
-        #     output = template_method.render(
-        #         FUNCTION_NAME=_make_function_name(route, 'delete')
-        #     )
-        #     elements.append(output)
-        # if path.head is not None:
-        #     output = template_method.render(
-        #         FUNCTION_NAME=_make_function_name(route, 'head')
-        #     )
-        #     elements.append(output)
-        # if path.options is not None:
-        #     output = template_method.render(
-        #         FUNCTION_NAME=_make_function_name(route, 'options')
-        #     )
-        #     elements.append(output)
-        # if path.patch is not None:
-        #     output = template_method.render(
-        #         FUNCTION_NAME=_make_function_name(route, 'patch')
-        #     )
-        #     elements.append(output)
-        # if path.trace is not None:
-        #     output = template_method.render(
-        #         FUNCTION_NAME=_make_function_name(route, 'trace')
-        #     )
-        #     elements.append(output)
+        if path.operations is not None:
+            for operation_name, operation in path.operations.items():
+                output = template_method.render(
+                    FUNCTION_NAME=_make_function_name(route, operation_name),
+                    METHOD=operation_name,
+                    ROUTE=route,
+                    OPERATION=operation,
+                    FUNCTION_PARAMETERS=_make_parameters(operation.parameters),
+                    HEADERS=_make_headers_passed_arg(operation.parameters),
+                    TYPES=TYPES,
+                    RESPONSES=_make_responses(operation.responses)
+                )
+                elements.append(output)
 
     with open(f'./{config.package_name}.py', 'w') as file:
         file.write('\n\n'.join(elements))
@@ -130,7 +92,8 @@ def _make_parameters(parameters: list[Parameter]) -> str:
 
         parameters_str.append(param_str)
 
-    return ', '.join(parameters_str) + ', '
+    return parameters_str
+    # return ', '.join(parameters_str) + ', '
 
 
 def _make_headers_passed_arg(parameters: list[Parameter]) -> dict:
@@ -143,6 +106,9 @@ def _make_responses(responses: dict[str, Response]) -> list:
     responses_str = []
 
     for status_code, response in responses.items():
+        if response.content is None:
+            continue
+
         for _, mediatype in response.content.items():
             responses_str.append({
                 'description': 'No description' if mediatype.schema is None else mediatype.schema['description']
