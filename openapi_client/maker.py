@@ -9,7 +9,8 @@ from openapi_client.openapi.path import Operation, Parameter, Response
 
 TYPES = {
     'boolean': 'bool',
-    'number': 'int',
+    'number': 'float',
+    'integer': 'int',
     'string': 'str',
     'array': 'list',
 }
@@ -79,6 +80,9 @@ def _make_function_name(route: str, method: str) -> str:
 
 
 def _make_parameters(parameters: list[Parameter]) -> list:
+    if parameters is None:
+        return []
+
     params_in_route = [p for p in parameters if p.in_ == 'path']
     parameters_str = []
 
@@ -97,14 +101,23 @@ def _make_parameters(parameters: list[Parameter]) -> list:
 
 
 def _make_headers(parameters: list[Parameter]) -> dict:
+    if parameters is None:
+        return {}
+
     return {p.name: {'description': p.description, 'type': TYPES[p.schema['type']]} for p in parameters if p.in_ == 'header'}
 
 
 def _make_query_parameters(parameters: list[Parameter]) -> dict:
+    if parameters is None:
+        return {}
+
     return {p.name: {'description': p.description, 'type': TYPES[p.schema['type']]} for p in parameters if p.in_ == 'query'}
 
 
 def _make_path_parameters(parameters: list[Parameter]) -> dict:
+    if parameters is None:
+        return {}
+
     params = {p.name: p.description for p in parameters if p.in_ == 'path'}
 
     if 'id' in params:
@@ -121,9 +134,12 @@ def _make_responses(responses: dict[str, Response]) -> list:
             continue
 
         for _, mediatype in response.content.items():
-            responses_str.append({
-                'description': 'No description' if mediatype.schema is None else mediatype.schema['description']
-            })
+            if mediatype.schema is None:
+                responses_str.append({'description': 'No description'})
+            elif 'description' in mediatype.schema:
+                responses_str.append({'description': mediatype.schema['description']})
+            else:
+                responses_str.append({'description': 'No description'})
 
     return responses_str
 

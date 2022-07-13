@@ -15,5 +15,6 @@ def parse_openapi(url_or_path: str):
 
     # Cleaning unused data to generate the client
     content.pop('servers', None)
+    content.pop('components', None)
 
     return Document(**content)

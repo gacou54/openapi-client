@@ -9,6 +9,9 @@ def apply_corrections_to_documents(document: Document) -> Document:
     for route, path in document.paths.items():
         if path.operations is not None:
             for operation_name, operation in path.operations.items():
+                if operation.parameters is None:
+                    continue
+
                 for param in operation.parameters:
                     if param.name == '...':
                         param.name = 'tags_path'
@@ -30,7 +33,6 @@ if __name__ == '__main__':
     )
 
     document = parse_openapi(url_or_path='https://api.orthanc-server.com/orthanc-openapi.json')
-    # document = parse_openapi(url_or_path='./orthanc-openapi.json')
 
     document = apply_corrections_to_documents(document)
 

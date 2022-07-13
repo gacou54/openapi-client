@@ -105,15 +105,18 @@ class Operation:
     security: dict = None
 
     def __post_init__(self):
-        for param in self.parameters:
-            if 'in' in param:
-                param['in_'] = param.pop('in')
-
-        self.responses = {k: Response(**v) for k, v in self.responses.items()}
         if self.parameters is not None:
+            for param in self.parameters:
+                # renaming param name that are also built-in function
+                if 'in' in param:
+                    param['in_'] = param.pop('in')
+
             self.parameters = [Parameter(**p) for p in self.parameters]
+
         if self.requestBody is not None:
             self.requestBody = RequestBody(**self.requestBody)
+
+        self.responses = {k: Response(**v) for k, v in self.responses.items()}
 
 
 @dataclass
