@@ -5,7 +5,7 @@ import jinja2
 
 from openapi_client.config import Config
 from openapi_client.openapi import Document
-from openapi_client.openapi.path import Parameter, Response
+from openapi_client.openapi.path import Operation, Parameter, Response
 
 TYPES = {
     'boolean': 'bool',
@@ -45,9 +45,12 @@ def write_client(document: Document, config: Config):
                     ROUTE=route,
                     OPERATION=operation,
                     FUNCTION_PARAMETERS=_make_parameters(operation.parameters),
-                    HEADERS=_make_headers_passed_arg(operation.parameters),
+                    PATH_PARAMETERS=_make_path_parameters(operation.parameters),
+                    QUERY_PARAMETERS=_make_query_parameters(operation.parameters),
+                    HEADERS=_make_headers(operation.parameters),
                     TYPES=TYPES,
-                    RESPONSES=_make_responses(operation.responses)
+                    RESPONSES=_make_responses(operation.responses),
+                    REQUEST_BODY=_make_request_body(operation),
                 )
                 elements.append(output)
 
@@ -76,13 +79,12 @@ def _make_function_name(route: str, method: str) -> str:
     return f'{method}{name}'.lower()
 
 
-def _make_parameters(parameters: list[Parameter]) -> str:
+def _make_parameters(parameters: list[Parameter]) -> list:
     params_in_route = [p for p in parameters if p.in_ == 'path']
+    parameters_str = []
 
     if len(params_in_route) == 0:
-        return ''
-
-    parameters_str = []
+        return parameters_str
 
     for param in params_in_route:
         # Rename "id" to "id_" because "id" is a builtin function in Python.
@@ -93,13 +95,24 @@ def _make_parameters(parameters: list[Parameter]) -> str:
         parameters_str.append(param_str)
 
     return parameters_str
-    # return ', '.join(parameters_str) + ', '
 
 
-def _make_headers_passed_arg(parameters: list[Parameter]) -> dict:
-    headers = {p.name: p.description for p in parameters if p.in_ == 'header'}
+def _make_headers(parameters: list[Parameter]) -> dict:
+    return {p.name: {'description': p.description, 'type': TYPES[p.schema['type']]} for p in parameters if p.in_ == 'header'}
 
-    return headers
+
+def _make_query_parameters(parameters: list[Parameter]) -> dict:
+    return {p.name: {'description': p.description, 'type': TYPES[p.schema['type']]} for p in parameters if p.in_ == 'query'}
+
+
+def _make_path_parameters(parameters: list[Parameter]) -> dict:
+    params = {p.name: p.description for p in parameters if p.in_ == 'path'}
+
+    if 'id' in params:
+        params['id_'] = params.pop('id')
+
+    return params
+
 
 
 def _make_responses(responses: dict[str, Response]) -> list:
@@ -115,3 +128,29 @@ def _make_responses(responses: dict[str, Response]) -> list:
             })
 
     return responses_str
+
+
+def _make_request_body(operation: Operation) -> dict:
+    request_body_types = {'content': [], 'data': [], 'json': [], 'files': []}
+
+    if operation.requestBody is not None:
+        for content_type, schema in operation.requestBody.content.items():
+            request_body_type = {
+                'content_type': content_type,
+                'description': schema['schema']['description'],
+                'properties': {}
+            }
+
+            if 'properties' in schema['schema']:
+                request_body_type['properties'] = schema['schema']['properties']
+
+            if content_type == 'application/json':
+                request_body_types['json'].append(request_body_type)
+            elif content_type == 'text/plain':
+                request_body_types['data'].append(request_body_type)
+            elif 'multipart' in content_type:
+                request_body_types['files'].append(request_body_type)
+            else:
+                request_body_types['content'].append(request_body_type)
+
+    return request_body_types
