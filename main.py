@@ -1,9 +1,5 @@
-import copy
-
 from openapi_client.openapi import Document
-from openapi_client.parser import parse_openapi
-from openapi_client.config import Config
-from openapi_client.writer import write_client
+from openapi_client import Config, parse_openapi, make_client
 
 
 def apply_corrections_to_documents(document: Document) -> Document:
@@ -28,13 +24,17 @@ def apply_corrections_to_documents(document: Document) -> Document:
     return document
 
 
-config = Config(
-    client_name='Orthanc'
-)
+if __name__ == '__main__':
+    config = Config(
+        client_name='Orthanc'
+    )
 
-# openapi_document = parse_openapi(url_path='https://api.orthanc-server.com/orthanc-openapi.json')
-document = parse_openapi(url_or_path='./orthanc-openapi.json')
+    document = parse_openapi(url_or_path='https://api.orthanc-server.com/orthanc-openapi.json')
+    # document = parse_openapi(url_or_path='./orthanc-openapi.json')
 
-document = apply_corrections_to_documents(document)
+    document = apply_corrections_to_documents(document)
 
-write_client(document, config)
+    client_str = make_client(document, config)
+
+    with open(f'./{config.package_name}.py', 'w') as file:
+        file.write(client_str)

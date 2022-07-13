@@ -15,7 +15,7 @@ TYPES = {
 }
 
 
-def write_client(document: Document, config: Config):
+def make_client(document: Document, config: Config):
     path = os.path.join(os.path.dirname(__file__), 'templates')
     template_loader = jinja2.FileSystemLoader(searchpath=path)
     template_env = jinja2.Environment(loader=template_loader)
@@ -54,8 +54,7 @@ def write_client(document: Document, config: Config):
                 )
                 elements.append(output)
 
-    with open(f'./{config.package_name}.py', 'w') as file:
-        file.write('\n\n'.join(elements))
+    return '\n\n'.join(elements)
 
 
 def _make_function_name(route: str, method: str) -> str:
@@ -112,7 +111,6 @@ def _make_path_parameters(parameters: list[Parameter]) -> dict:
         params['id_'] = params.pop('id')
 
     return params
-
 
 
 def _make_responses(responses: dict[str, Response]) -> list:
