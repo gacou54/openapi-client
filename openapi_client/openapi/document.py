@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Dict
 
 from openapi_client.openapi.info import Info
 from openapi_client.openapi.path import Path
@@ -10,7 +11,7 @@ class Document:
     openapi: str  # OpenAPI version
 
     info: Info
-    paths: dict[str, Path]
+    paths: Dict[str, Path]
 
     def __post_init__(self):
         self.info = Info(**self.info)

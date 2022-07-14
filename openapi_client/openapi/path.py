@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Dict, List
 
 
 @dataclass
@@ -15,7 +15,7 @@ class Parameter:
 
     description: str = None
     required: bool = None
-    schema: dict = None
+    schema: Dict = None
 
     def __post_init__(self):
         if self.in_ not in ('query', 'header', 'path', 'cookie'):
@@ -28,7 +28,7 @@ class Parameter:
 @dataclass
 class Header:
     description: str = None
-    schema: dict[str, str] = None
+    schema: Dict[str, str] = None
 
 
 @dataclass
@@ -42,7 +42,7 @@ class Example:
 @dataclass
 class Encoding:
     contentType: str = None
-    headers: dict[str, Header] = None
+    headers: Dict[str, Header] = None
     style: str = None
     explode: bool = None
     allowReserved: bool = None
@@ -54,10 +54,10 @@ class Encoding:
 
 @dataclass
 class MediaType:
-    schema: dict[str, str] = None
+    schema: Dict[str, str] = None
     example: Any = None
-    examples: dict[str, Example] = None
-    encoding: dict[str, Encoding] = None
+    examples: Dict[str, Example] = None
+    encoding: Dict[str, Encoding] = None
 
     def __post_init__(self):
         if self.examples is not None:
@@ -70,9 +70,9 @@ class MediaType:
 class Response:
     description: str
 
-    headers: dict[str, Header] = None
-    content: dict[str, MediaType] = None
-    links: dict = None
+    headers: Dict[str, Header] = None
+    content: Dict[str, MediaType] = None
+    links: Dict = None
 
     def __post_init__(self):
         if self.headers is not None:
@@ -83,7 +83,7 @@ class Response:
 
 @dataclass
 class RequestBody:
-    content: dict
+    content: Dict
 
     description: str = None
     require: bool = None
@@ -91,18 +91,18 @@ class RequestBody:
 
 @dataclass
 class Operation:
-    responses: dict[str, Response]
+    responses: Dict[str, Response]
 
-    tags: list[str] = None
+    tags: List[str] = None
     summary: str = None
     description: str = None
     externalDocs: Any = None
     operationId: str = None
 
-    parameters: list[Parameter] = None
+    parameters: List[Parameter] = None
     requestBody: RequestBody = None
     deprecated: bool = None
-    security: dict = None
+    security: Dict = None
 
     def __post_init__(self):
         if self.parameters is not None:
@@ -124,7 +124,7 @@ class Path:
     summary: str = None
     description: str = None
 
-    operations: dict = None
+    operations: Dict = None
 
     def __init__(self, **kwargs):
         # self.summary = summary
@@ -138,68 +138,3 @@ class Path:
             operation_data.pop('callbacks', None)
 
             self.operations[operation_name] = Operation(**operation_data)
-
-    def __post_init__(self):
-        return
-        if self.operations:
-                # Cleaning unused data to generate the client
-                operation.pop('servers', None)
-                operation.pop('callbacks', None)
-
-                self.operations[operation] = Operation(**operation_data)
-
-        # if self.get is not None:
-        #     # Cleaning unused data to generate the client
-        #     self.get.pop('servers', None)
-        #     self.get.pop('callbacks', None)
-        #
-        #     self.get = Operation(**self.get)
-        #
-        # if self.post is not None:
-        #     # Cleaning unused data to generate the client
-        #     self.post.pop('servers', None)
-        #     self.post.pop('callbacks', None)
-        #
-        #     self.post = Operation(**self.post)
-        #
-        # if self.put is not None:
-        #     # Cleaning unused data to generate the client
-        #     self.put.pop('servers', None)
-        #     self.put.pop('callbacks', None)
-        #
-        #     self.put = Operation(**self.put)
-        #
-        # if self.delete is not None:
-        #     # Cleaning unused data to generate the client
-        #     self.delete.pop('servers', None)
-        #     self.delete.pop('callbacks', None)
-        #
-        #     self.delete = Operation(**self.delete)
-        #
-        # if self.options is not None:
-        #     # Cleaning unused data to generate the client
-        #     self.options.pop('servers', None)
-        #     self.options.pop('callbacks', None)
-        #
-        #     self.options = Operation(**self.options)
-        #
-        # if self.head is not None:
-        #     # Cleaning unused data to generate the client
-        #     self.head.pop('servers', None)
-        #     self.head.pop('callbacks', None)
-        #
-        #     self.head = Operation(**self.head)
-        #
-        # if self.patch is not None:
-        #     # Cleaning unused data to generate the client
-        #     self.patch.pop('servers', None)
-        #     self.patch.pop('callbacks', None)
-        #
-        #     self.patch = Operation(**self.patch)
-        #
-        # if self.trace is not None:
-        #     # Cleaning unused data to generate the client
-        #     self.trace.pop('servers', None)
-        #     self.trace.pop('callbacks', None)
-        #
-        #     self.trace = Operation(**self.trace)

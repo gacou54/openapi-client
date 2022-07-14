@@ -15,7 +15,7 @@
             {% endif -%}
             {%- if HEADERS -%}headers: HeaderTypes = None,
             {% endif -%}
-            ) -> {% if METHOD not in ['delete', 'put'] %}Union[list, dict, str, bytes, int]{% else %}None{% endif %}:
+            ) -> {% if METHOD not in ['delete', 'put'] %}Union[Dict, List, str, bytes, int]{% else %}None{% endif %}:
         """{{ OPERATION.summary }}
 
         {{ OPERATION.description }}
@@ -83,7 +83,7 @@
 
         Returns
         -------
-        Union[list, dict, str, bytes, int]
+        Union[Dict, List, str, bytes, int]
         {%- for response in RESPONSES %}
             {{ response.description }}
         {%- endfor %}

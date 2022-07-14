@@ -1,5 +1,6 @@
 import os
 import dataclasses
+from typing import Dict, List
 
 import jinja2
 
@@ -12,7 +13,7 @@ TYPES = {
     'number': 'float',
     'integer': 'int',
     'string': 'str',
-    'array': 'list',
+    'array': 'List',
 }
 
 
@@ -79,7 +80,7 @@ def _make_function_name(route: str, method: str) -> str:
     return f'{method}{name}'.lower()
 
 
-def _make_parameters(parameters: list[Parameter]) -> list:
+def _make_parameters(parameters: List[Parameter]) -> List:
     if parameters is None:
         return []
 
@@ -100,21 +101,21 @@ def _make_parameters(parameters: list[Parameter]) -> list:
     return parameters_str
 
 
-def _make_headers(parameters: list[Parameter]) -> dict:
+def _make_headers(parameters: List[Parameter]) -> dict:
     if parameters is None:
         return {}
 
     return {p.name: {'description': p.description, 'type': TYPES[p.schema['type']]} for p in parameters if p.in_ == 'header'}
 
 
-def _make_query_parameters(parameters: list[Parameter]) -> dict:
+def _make_query_parameters(parameters: List[Parameter]) -> dict:
     if parameters is None:
         return {}
 
     return {p.name: {'description': p.description, 'type': TYPES[p.schema['type']]} for p in parameters if p.in_ == 'query'}
 
 
-def _make_path_parameters(parameters: list[Parameter]) -> dict:
+def _make_path_parameters(parameters: List[Parameter]) -> dict:
     if parameters is None:
         return {}
 
@@ -126,7 +127,7 @@ def _make_path_parameters(parameters: list[Parameter]) -> dict:
     return params
 
 
-def _make_responses(responses: dict[str, Response]) -> list:
+def _make_responses(responses: Dict[str, Response]) -> List:
     responses_str = []
 
     for status_code, response in responses.items():
