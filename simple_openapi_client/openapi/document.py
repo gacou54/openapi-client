@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict
 
-from openapi_client.openapi.info import Info
-from openapi_client.openapi.path import Path
+from simple_openapi_client.openapi.info import Info
+from simple_openapi_client.openapi.path import Path
 
 
 @dataclass

@@ -4,9 +4,9 @@ from typing import Dict, List
 
 import jinja2
 
-from openapi_client.config import Config
-from openapi_client.openapi import Document
-from openapi_client.openapi.path import Operation, Parameter, Response
+from simple_openapi_client.config import Config
+from simple_openapi_client.openapi import Document
+from simple_openapi_client.openapi.path import Operation, Parameter, Response
 
 TYPES = {
     'boolean': 'bool',

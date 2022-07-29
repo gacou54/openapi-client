@@ -1,11 +1,10 @@
 *
 
 !.gitignore
-!main.py
 !poetry.lock
 !pyproject.toml
 
-!openapi_client/
-!openapi_client/**
+!simple_openapi_client/
+!simple_openapi_client/**
 
 *.pyc
