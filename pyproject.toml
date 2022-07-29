@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "simple-openapi-client"
-version = "0.1.1"
+version = "0.1.2"
 description = "OpenAPI Python client generator that follows the KISS principle."
 authors = ["Gabriel Couture <gacou54@ulaval.ca>"]
 license = "BSD-3-Clause"
