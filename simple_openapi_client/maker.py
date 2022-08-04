@@ -2,6 +2,7 @@ import os
 import dataclasses
 from typing import Dict, List
 
+from black import format_str, FileMode
 import jinja2
 
 from simple_openapi_client.config import Config
@@ -17,7 +18,7 @@ TYPES = {
 }
 
 
-def make_client(document: Document, config: Config):
+def make_client(document: Document, config: Config, use_black: bool = False):
     path = os.path.join(os.path.dirname(__file__), 'templates')
     template_loader = jinja2.FileSystemLoader(searchpath=path)
     template_env = jinja2.Environment(loader=template_loader)
@@ -56,7 +57,12 @@ def make_client(document: Document, config: Config):
                 )
                 elements.append(output)
 
-    return '\n\n'.join(elements)
+    client_str = '\n\n'.join(elements)
+
+    if use_black:
+        client_str = format_str(client_str, mode=FileMode())
+
+    return client_str
 
 
 def _make_function_name(route: str, method: str) -> str:
