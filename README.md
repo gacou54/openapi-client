@@ -26,7 +26,7 @@ from simple_openapi_client import parse_openapi, make_client, Config
 
 config = Config(client_name='Orthanc', package_name='client')
 document = parse_openapi(url_or_path='https://api.orthanc-server.com/orthanc-openapi.json')
-client_str = make_client(document, config)
+client_str = make_client(document, config, use_black=True)
 
 with open(f'./{config.package_name}.py', 'w') as file:
     file.write(client_str)
@@ -39,7 +39,7 @@ from simple_openapi_client import parse_openapi, make_client, Config
 
 config = Config(client_name='AsyncOrthanc', package_name='async_client')
 document = parse_openapi(url_or_path='https://api.orthanc-server.com/orthanc-openapi.json')
-client_str = make_client(document, config)
+client_str = make_client(document, config, async_mode=True, use_black=True)
 
 with open(f'./{config.package_name}.py', 'w') as file:
     file.write(client_str)
