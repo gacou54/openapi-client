@@ -18,7 +18,7 @@ TYPES = {
 }
 
 
-def make_client(document: Document, config: Config, use_black: bool = False):
+def make_client(document: Document, config: Config, async_mode: bool = False, use_black: bool = False):
     path = os.path.join(os.path.dirname(__file__), 'templates')
     template_loader = jinja2.FileSystemLoader(searchpath=path)
     template_env = jinja2.Environment(loader=template_loader)
@@ -26,7 +26,7 @@ def make_client(document: Document, config: Config, use_black: bool = False):
     elements = []
 
     # Main Client
-    template_client = template_env.get_template('client.jinja')
+    template_client = template_env.get_template('async_client.jinja' if async_mode else 'client.jinja')
     output = template_client.render(
         CLIENT=config.client_name,
         document=dataclasses.asdict(document)
@@ -35,7 +35,7 @@ def make_client(document: Document, config: Config, use_black: bool = False):
 
     # Methods
     for route, path in document.paths.items():
-        template_method = template_env.get_template('method.jinja')
+        template_method = template_env.get_template('async_method.jinja' if async_mode else 'method.jinja')
 
         # Rename "id" to "id_" because "id" is a builtin function in Python.
         route = route.replace('id', 'id_')
