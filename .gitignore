@@ -8,4 +8,7 @@
 !simple_openapi_client/
 !simple_openapi_client/**
 
+!tests/
+!tests/**
+
 *.pyc
