@@ -35,7 +35,7 @@ class {{ CLIENT }}(httpx.Client):
     {%- endif -%}
     """
 
-    def __init__(self, url: str, username: Optional[str] = None, password: Optional[str] = None):
+    def __init__(self, url: str, username: Optional[str] = None, password: Optional[str] = None, headers: Optional[HeaderTypes] = None):
         """
         Parameters
         ----------
@@ -48,6 +48,9 @@ class {{ CLIENT }}(httpx.Client):
 
         if username and password:
             self.setup_credentials(username, password)
+
+        if headers is not None:
+            self.headers = headers
 
     def setup_credentials(self, username: str, password: str) -> None:
         """Set credentials needed for HTTP requests"""
