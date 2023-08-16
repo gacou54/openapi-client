@@ -35,16 +35,25 @@ class {{ CLIENT }}(httpx.Client):
     {%- endif -%}
     """
 
-    def __init__(self, url: str, username: Optional[str] = None, password: Optional[str] = None, headers: Optional[HeaderTypes] = None):
+    def __init__(self, url: str, username: Optional[str] = None, password: Optional[str] = None, headers: Optional[HeaderTypes] = None, return_raw_response: bool = False):
         """
         Parameters
         ----------
         url
             server's URL
+        username
+            Orthanc's username
+        password
+            Orthanc's password
+        headers
+            Headers that will be share in all requests
+        return_raw_response
+            All Orthanc's methods will return que raw httpx.Response rather than the serialized
         """
         super().__init__()
         self.url = url
         self.version = '{{ document.info.version }}'
+        self.return_raw_response = return_raw_response
 
         if username and password:
             self.setup_credentials(username, password)
@@ -60,7 +69,7 @@ class {{ CLIENT }}(httpx.Client):
              route: str,
              params: Optional[QueryParamTypes] = None,
              headers: Optional[HeaderTypes] = None,
-             cookies: Optional[CookieTypes] = None) -> Union[Dict, List, str, bytes, int]:
+             cookies: Optional[CookieTypes] = None) -> Union[Dict, List, str, bytes, int, httpx.Response]:
         """GET request with specified route
 
         Parameters
@@ -75,10 +84,13 @@ class {{ CLIENT }}(httpx.Client):
 
         Returns
         -------
-        Union[Dict, List, str, bytes, int]
-            Serialized response of the HTTP GET request.
+        Union[Dict, List, str, bytes, int, httpx.Response]
+            Serialized response of the HTTP GET request or httpx.Response.
         """
         response = self.get(url=route, params=params, headers=headers, cookies=cookies)
+
+        if self.return_raw_response:
+            return response
 
         if 200 <= response.status_code < 300:
             if 'application/json' in response.headers['content-type']:
@@ -94,7 +106,7 @@ class {{ CLIENT }}(httpx.Client):
                 route: str,
                 params: Optional[QueryParamTypes] = None,
                 headers: Optional[HeaderTypes] = None,
-                cookies: Optional[CookieTypes] = None) -> None:
+                cookies: Optional[CookieTypes] = None) -> Optional[httpx.Response]:
         """DELETE to specified route
 
         Parameters
@@ -109,10 +121,13 @@ class {{ CLIENT }}(httpx.Client):
 
         Returns
         -------
-        None
-            If the HTTP DELETE request fails, HTTPError is raised.
+        Optional[httpx.Response]
+            If the HTTP DELETE request fails, HTTPError is raised, or return httpx.Response.
         """
         response = self.delete(route, params=params, headers=headers, cookies=cookies)
+
+        if self.return_raw_response:
+            return response
 
         if 200 <= response.status_code < 300:
             return
@@ -127,7 +142,7 @@ class {{ CLIENT }}(httpx.Client):
               json: Optional[Any] = None,
               params: Optional[QueryParamTypes] = None,
               headers: Optional[HeaderTypes] = None,
-              cookies: Optional[CookieTypes] = None) -> Union[Dict, List, str, bytes, int]:
+              cookies: Optional[CookieTypes] = None) -> Union[Dict, List, str, bytes, int, httpx.Response]:
         """POST to specified route
 
         Parameters
@@ -145,10 +160,13 @@ class {{ CLIENT }}(httpx.Client):
 
         Returns
         -------
-        Union[Dict, List, str, bytes, int]
-            Serialized response of the HTTP POST request.
+        Union[Dict, List, str, bytes, int, httpx.Response]
+            Serialized response of the HTTP POST request or httpx.Response.
         """
         response = self.post(route, content=content, data=data, files=files, json=json, params=params, headers=headers, cookies=cookies)
+
+        if self.return_raw_response:
+            return response
 
         if 200 <= response.status_code < 300:
             if 'application/json' in response.headers['content-type']:
@@ -168,7 +186,7 @@ class {{ CLIENT }}(httpx.Client):
              json: Optional[Any] = None,
              params: Optional[QueryParamTypes] = None,
              headers: Optional[HeaderTypes] = None,
-             cookies: Optional[CookieTypes] = None) -> None:
+             cookies: Optional[CookieTypes] = None) -> Optional[httpx.Response]:
         """PUT to specified route
 
         Parameters
@@ -186,10 +204,13 @@ class {{ CLIENT }}(httpx.Client):
 
         Returns
         -------
-        None
-            If the HTTP PUT request fails, HTTPError is raised.
+        Optional[httpx.Response]
+            If the HTTP PUT request fails, HTTPError is raised, or return httpx.Response.
         """
         response = self.put(route, content=content, data=data, files=files, json=json, params=params, headers=headers, cookies=cookies)
+
+        if self.return_raw_response:
+            return response
 
         if 200 <= response.status_code < 300:
             return
