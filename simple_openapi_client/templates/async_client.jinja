@@ -48,7 +48,7 @@ class {{ CLIENT }}(httpx.AsyncClient):
         headers
             Headers that will be share in all requests
         return_raw_response
-            All Orthanc's methods will return que raw httpx.Response rather than the serialized
+            All Orthanc's methods will return a raw httpx.Response rather than the serialized result
         """
         super().__init__()
         self.url = url
