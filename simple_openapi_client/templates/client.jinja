@@ -48,7 +48,7 @@ class {{ CLIENT }}(httpx.Client):
         headers
             Headers that will be share in all requests
         return_raw_response
-            All Orthanc's methods will return que raw httpx.Response rather than the serialized
+            All Orthanc's methods will return a raw httpx.Response rather than the serialized result
         """
         super().__init__()
         self.url = url
@@ -213,6 +213,8 @@ class {{ CLIENT }}(httpx.Client):
             return response
 
         if 200 <= response.status_code < 300:
-            return
+
+
+
 
         raise httpx.HTTPError(f'HTTP code: {response.status_code}, with text: {response.text}')
