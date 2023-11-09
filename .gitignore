@@ -2,7 +2,6 @@
 
 !.gitignore
 !README.md
-!poetry.lock
 !pyproject.toml
 
 !simple_openapi_client/
