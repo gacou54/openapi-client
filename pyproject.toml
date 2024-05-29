@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "simple-openapi-client"
-version = "0.5.3"
+version = "0.5.4"
 description = "OpenAPI Python client generator that follows the KISS principle."
 authors = ["Gabriel Couture <gacou54@gmail.ca>"]
 license = "BSD-3-Clause"
@@ -11,10 +11,7 @@ homepage = 'https://github.com/gacou54/openapi-client'
 python = "^3.8"
 httpx = "^0"
 Jinja2 = "^3.1.2"
-black = "^23.7.0"
-
-[tool.poetry.dev-dependencies]
-pytest = "^7.1.2"
+black = "^24.4.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
