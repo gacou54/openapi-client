@@ -4,7 +4,10 @@ import pytest
 
 import simple_openapi_client
 
-OPENAPI_URL = 'https://api.orthanc-server.com/orthanc-openapi.json'
+
+ORTHANC_DEMO_URL = 'https://orthanc.uclouvain.be/demo'
+
+OPENAPI_URL = 'https://orthanc.uclouvain.be/api/orthanc-openapi.json'
 CLIENT_PATH = 'generated_client.py'
 CLIENT_MODULE = 'generated_client'
 
@@ -66,7 +69,7 @@ def _apply_corrections_to_documents(document):
 
 def test_client(generate_client):
     client_class = getattr(__import__(CLIENT_MODULE), CLIENT_NAME)
-    client = client_class(url='https://demo.orthanc-server.com')
+    client = client_class(url=ORTHANC_DEMO_URL)
 
     result = client.get_system()
 
@@ -75,7 +78,7 @@ def test_client(generate_client):
     assert 'DicomAet' in result
     assert 'DicomPort' in result
 
-    with client_class(url='https://demo.orthanc-server.com') as client:
+    with client_class(url=ORTHANC_DEMO_URL) as client:
         result = client.get_system()
 
     assert isinstance(result, dict)
@@ -87,7 +90,7 @@ def test_client(generate_client):
 @pytest.mark.asyncio
 async def test_async_client(generate_client):
     async_client_class = getattr(__import__(ASYNC_CLIENT_MODULE), CLIENT_NAME)
-    async_client = async_client_class(url='https://demo.orthanc-server.com')
+    async_client = async_client_class(url=ORTHANC_DEMO_URL)
 
     result = await async_client.get_system()
 
@@ -96,7 +99,7 @@ async def test_async_client(generate_client):
     assert 'DicomAet' in result
     assert 'DicomPort' in result
 
-    async with async_client_class(url='https://demo.orthanc-server.com') as async_client:
+    async with async_client_class(url=ORTHANC_DEMO_URL) as async_client:
         result = await async_client.get_system()
 
     assert isinstance(result, dict)

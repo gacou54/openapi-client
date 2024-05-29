@@ -22,64 +22,65 @@
         Tags: {{ ','.join(OPERATION.tags) }}
         {%- if OPERATION.externalDocs %}ExternaDocs: {{ OPERATION.externalDocs }}{% endif %}
 
+        {%- if PATH_PARAMETERS or REQUEST_BODY.json or REQUEST_BODY.files or REQUEST_BODY.data or QUERY_PARAMETERS or HEADERS %}
+
         Parameters
         ----------
-        {% if PATH_PARAMETERS -%}
-        {% for name, description in PATH_PARAMETERS.items() -%}
+        {%- if PATH_PARAMETERS %}
+        {%- for name, description in PATH_PARAMETERS.items() %}
         {{ name }}
             {{ description }}
-        {% endfor -%}
-        {% endif -%}
-
-        {% if REQUEST_BODY.json %}json
+        {%- endfor %}
+        {%- endif %}
+        {%- if REQUEST_BODY.json %}
+        json
         {%- for request_data in REQUEST_BODY.json %}
-            {% if request_data -%}
+            {%- if request_data %}
             Dictionary with the following keys:
             {%- for property_name, property in request_data.properties.items() %}
-            "{{ property_name }}": {{ property['description'] }}
+              "{{ property_name }}": {{ property['description'] }}
             {%- endfor %}
-            {%- endif -%}
+            {%- endif %}
         {% endfor -%}
-        {% endif -%}
-
-        {% if REQUEST_BODY.files %}files
+        {%- endif %}
+        {%- if REQUEST_BODY.files %}
+        files
         {%- for request_data in REQUEST_BODY.files %}
-            {% if request_data -%}Files:
+            {%- if request_data %}
+            Files:
             {%- for property_name, property in request_data.properties.items() %}
                 "{{ property_name }}": {{ property['description'] }}
             {%- endfor %}
-            {%- endif -%}
+            {%- endif %}
         {% endfor -%}
-        {% endif -%}
-
-        {% if REQUEST_BODY.data %}
+        {%- endif %}
+        {%- if REQUEST_BODY.data %}
         data
         {%- for request_data in REQUEST_BODY.data %}
             {{ request_data.description }}
-        {% endfor -%}
-        {% endif -%}
-
-        {% if REQUEST_BODY.content %}content
-        {%- for request_data in REQUEST_BODY.content %}
-            - (Content-Type: "{{ request_data.content_type }}") {{ request_data.description }}
-        {% endfor -%}
-        {% endif -%}
-
-        {% if QUERY_PARAMETERS -%}
+        {%- endfor -%}
+        {%- endif %}
+        {%- if REQUEST_BODY.content %}
+        content
+            {%- for request_data in REQUEST_BODY.content %}
+                - (Content-Type: "{{ request_data.content_type }}") {{ request_data.description }}
+            {%- endfor %}
+        {%- endif %}
+        {%- if QUERY_PARAMETERS %}
         params
             Dictionary of optional parameters:
-        {%- for name, query in QUERY_PARAMETERS.items() %}
-            "{{ name }}" ({{ query.type }}): {{ query.description }}
-        {%- endfor -%}
-        {% endif -%}
-
-        {% if HEADERS -%}
+            {%- for name, query in QUERY_PARAMETERS.items() %}
+                "{{ name }}" ({{ query.type }}): {{ query.description }}
+            {%- endfor %}
+        {%- endif %}
+        {%- if HEADERS %}
         headers
             Dictionary of optional headers:
-            {% for name, header in HEADERS.items() -%}
+            {%- for name, header in HEADERS.items() %}
                 "{{ name }}" ({{ header.type }}): {{ header.description }}
-            {% endfor -%}
-        {% endif %}
+            {%- endfor %}
+        {%- endif %}
+        {%- endif %}
 
         Returns
         -------
