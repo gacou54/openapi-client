@@ -1,5 +1,6 @@
 import os
 import dataclasses
+import re
 from typing import Dict, List
 
 from black import format_str, FileMode
@@ -37,8 +38,7 @@ def make_client(document: Document, config: Config, async_mode: bool = False, us
     for route, path in document.paths.items():
         template_method = template_env.get_template('async_method.jinja' if async_mode else 'method.jinja')
 
-        # Rename "id" to "id_" because "id" is a builtin function in Python.
-        route = route.replace('id', 'id_')
+        route = _rename_route_parameters(route)
 
         if path.operations is not None:
             for operation_name, operation in path.operations.items():
@@ -97,8 +97,7 @@ def _make_parameters(parameters: List[Parameter]) -> List:
         return parameters_str
 
     for param in params_in_route:
-        # Rename "id" to "id_" because "id" is a builtin function in Python.
-        param_name = param.name.replace('id', 'id_')
+        param_name = _python_parameter_name(param.name)
         param_type = TYPES[param.schema['type']]
         param_str = f'{param_name}: {param_type}'
 
@@ -131,6 +130,23 @@ def _make_path_parameters(parameters: List[Parameter]) -> dict:
         params['id_'] = params.pop('id')
 
     return params
+
+
+def _python_parameter_name(name: str) -> str:
+    """Rename the "id" parameter to "id_" because "id" is a builtin function in Python.
+
+    Only the exact name is renamed, so names that merely contain "id" are kept as is.
+    """
+    return 'id_' if name == 'id' else name
+
+
+def _rename_route_parameters(route: str) -> str:
+    """Rename the parameters in the route (e.g. "/instances/{id}") like the function parameters.
+
+    Only the "{...}" placeholders are renamed, the other parts of the route
+    (e.g. "/tools/generate-uid") must stay unchanged to reach the right URL.
+    """
+    return re.sub(r'\{([^}]*)\}', lambda match: '{' + _python_parameter_name(match.group(1)) + '}', route)
 
 
 def _make_responses(responses: Dict[str, Response]) -> List:
